@@ -1,5 +1,9 @@
+### .gitignore
+Create a `.gitignore` file to ignore unnecessary files.
+
+```plaintext
 __pycache__/
 *.pyc
-data/raw/*
-data/processed/*
-*.ipynb_checkpoints
+*.pyo
+*.pyd
+data/*
