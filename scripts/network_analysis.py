@@ -3,6 +3,11 @@ import networkx as nx
 from networkx.algorithms.community import greedy_modularity_communities
 import matplotlib.pyplot as plt
 import os
+import networkx as nx
+import matplotlib.pyplot as plt
+import numpy as np
+import matplotlib.colors as mcolors
+import matplotlib.cm as cm
 
 def load_processed_data(file_path):
     # Load processed data
@@ -15,106 +20,187 @@ def compute_correlation_matrix(counts_array):
     correlation_matrix = np.corrcoef(counts_2d)     # Compute the correlation matrix
     return correlation_matrix
 
+# def build_network(correlation_matrix, threshold=0.5):
+#     # Create a graph from the correlation matrix
+#     G = nx.Graph()
+#     num_nodes = correlation_matrix.shape[0]
+#     for i in range(num_nodes):
+#         for j in range(i+1, num_nodes):
+#             if abs(correlation_matrix[i, j]) > threshold:
+#                 G.add_edge(i, j, weight=correlation_matrix[i, j])
+#     return G
+
+# def plot_network_update(G, title=None, decimal_places=None):
+#     # Plot the network
+#     pos = nx.spring_layout(G)
+#     nx.draw(G, pos, with_labels=True, node_color='skyblue', node_size=700, edge_color='grey')
+#     labels = nx.get_edge_attributes(G, 'weight')
+#     if decimal_places is not None:
+#         labels = {k: f"{v:.{decimal_places}f}" for k, v in labels.items()}
+#     nx.draw_networkx_edge_labels(G, pos, edge_labels=labels)
+#     if title:
+#         plt.title(title)
+#     plt.show()
+
 def build_network(correlation_matrix, threshold=0.5):
-    # Create a graph from the correlation matrix
+    """
+    Create a graph from the correlation matrix.
+    Edges are added if the absolute value of the correlation exceeds the threshold.
+    """
     G = nx.Graph()
     num_nodes = correlation_matrix.shape[0]
     for i in range(num_nodes):
-        for j in range(i+1, num_nodes):
-            if correlation_matrix[i, j] > threshold:
+        for j in range(i + 1, num_nodes):
+            if abs(correlation_matrix[i, j]) > threshold:
+                # Add an edge with the actual correlation value as the weight
                 G.add_edge(i, j, weight=correlation_matrix[i, j])
     return G
 
-def plot_network(G):
-    # Plot the network
+def plot_network(G, title=None, decimal_places=None):
+    """
+    Plot the network with edge weights.
+    """
+    pos = nx.circular_layout(G)
+    labels = {i: f'NV{i}' for i in G.nodes()}
+    colors = ['b' if G[u][v]['weight'] > 0 else 'r' for u, v in G.edges()]
+    edge_labels = nx.get_edge_attributes(G, 'weight')
+    
+    nx.draw(G, pos, labels=labels, with_labels=True, node_color='skyblue', node_size=700, edge_color=colors, font_weight='bold')
+    if decimal_places is not None:
+        edge_labels = {k: f"{v:.{decimal_places}f}" for k, v in edge_labels.items()}
+    nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels, font_color='black')
+    if title:
+        plt.title(title)
+    plt.show()
+
+def plot_network_with_communities(G, title=None, decimal_places=None):
     pos = nx.spring_layout(G)
-    nx.draw(G, pos, with_labels=True, node_color='skyblue', node_size=700, edge_color='grey')
-    labels = nx.get_edge_attributes(G, 'weight')
-    nx.draw_networkx_edge_labels(G, pos, edge_labels=labels)
+    communities = community.louvain_communities(G)
+    colors = ['b' if G[u][v]['weight'] > 0 else 'r' for u, v in G.edges()]
+    edge_labels = nx.get_edge_attributes(G, 'weight')
+
+    nx.draw(G, pos, with_labels=True, node_color='skyblue', node_size=700, edge_color=colors, font_weight='bold')
+    if decimal_places is not None:
+        edge_labels = {k: f"{v:.{decimal_places}f}" for k, v in edge_labels.items()}
+    nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels, font_color='black')
+
+    for community in communities:
+        nx.draw_networkx_nodes(G, pos, nodelist=community, node_size=700, alpha=0.5)
+
+    if title:
+        plt.title(title)
     plt.show()
 
-def plot_degree_distribution(G_reference, G_signal):
-    fig, axs = plt.subplots(1, 2, figsize=(12, 6))
+# def plot_network(G):
+#     # Plot the network
+#     pos = nx.spring_layout(G)
+#     nx.draw(G, pos, with_labels=True, node_color='skyblue', node_size=700, edge_color='grey')
+#     labels = nx.get_edge_attributes(G, 'weight')
+#     nx.draw_networkx_edge_labels(G, pos, edge_labels=labels)
+#     plt.show()
+    
+def plot_network_3d(G, ax):
+    # 3D layout
+    pos = nx.spring_layout(G, dim=3)
 
-    degrees_reference = [G_reference.degree(n) for n in G_reference.nodes()]
-    axs[0].hist(degrees_reference, bins=10, color='b', alpha=0.7)
-    axs[0].set_title('Reference Counts Degree Distribution')
-    axs[0].set_xlabel('Degree')
-    axs[0].set_ylabel('Frequency')
+    # Extract node positions
+    node_pos = np.array([pos[v] for v in G.nodes()])
 
-    degrees_signal = [G_signal.degree(n) for n in G_signal.nodes()]
-    axs[1].hist(degrees_signal, bins=10, color='r', alpha=0.7)
-    axs[1].set_title('Signal Counts Degree Distribution')
-    axs[1].set_xlabel('Degree')
-    axs[1].set_ylabel('Frequency')
+    # Draw nodes
+    nx.draw(G, pos, ax=ax, with_labels=True, node_color='skyblue', node_size=700, edge_color='grey')
 
+    # Draw edges
+    for u, v in G.edges():
+        ax.plot([pos[u][0], pos[v][0]], [pos[u][1], pos[v][1]], [pos[u][2], pos[v][2]], color='grey')
+
+    # Set axis labels
+    ax.set_xlabel('X')
+    ax.set_ylabel('Y')
+    ax.set_zlabel('Z')
+
+def plot_network_updated(G, title=None):
+    """
+    Plot the network with edge weights using a circular layout and a colorbar for edge weights.
+    """
+    fig, ax = plt.subplots(figsize=(8, 6))  # Create a figure and an Axes
+    pos = nx.circular_layout(G)
+    labels = {i: f'NV{i}' for i in G.nodes()}
+
+    # Node colors: first 5 nodes red, rest blue
+    node_colors = ['red' if i < 5 else 'blue' for i in G.nodes()]
+
+    # Edge colors based on weight
+    edges = G.edges(data=True)
+    weights = [G[u][v]['weight'] for u, v in G.edges()]
+    
+    # Normalize edge weights for colormap
+    norm = mcolors.Normalize(vmin=min(weights), vmax=max(weights))
+    cmap = cm.coolwarm
+    edge_colors = [cmap(norm(weight)) for weight in weights]
+
+    # Draw nodes
+    nx.draw_networkx_nodes(G, pos, node_color=node_colors, node_size=700, ax=ax)
+    
+    # Draw edges
+    nx.draw_networkx_edges(G, pos, edge_color=edge_colors, width=2, ax=ax)
+
+    # Draw labels
+    nx.draw_networkx_labels(G, pos, labels=labels, font_color='black', font_weight='bold')
+
+    # Colorbar for edges
+    sm = plt.cm.ScalarMappable(cmap=cmap, norm=norm)
+    sm.set_array([])  # Dummy empty array for the colorbar
+    cbar = plt.colorbar(sm, ax=ax, orientation='vertical', shrink=0.8)
+    cbar.set_label('Correlation')
+
+    if title:
+        plt.title(title)
     plt.tight_layout()
     plt.show()
 
-def plot_clustering_coefficient(G_reference, G_signal):
-    fig, axs = plt.subplots(1, 2, figsize=(12, 6))
+def plot_network_coords(G, coords, title=None):
+    """
+    Plot the network with edge weights using specified coordinates and a colorbar for edge weights.
+    """
+    fig, ax = plt.subplots(figsize=(8, 6))  # Create a figure and an Axes
 
-    clustering_reference = nx.clustering(G_reference).values()
-    axs[0].hist(clustering_reference, bins=10, color='b', alpha=0.7)
-    axs[0].set_title('Reference Counts Clustering Coefficient')
-    axs[0].set_xlabel('Clustering Coefficient')
-    axs[0].set_ylabel('Frequency')
+    # Create a dictionary for positions
+    pos = {i: coords[i] for i in range(len(coords))}
+    labels = {i: f'NV{i}' for i in G.nodes()}
 
-    clustering_signal = nx.clustering(G_signal).values()
-    axs[1].hist(clustering_signal, bins=10, color='r', alpha=0.7)
-    axs[1].set_title('Signal Counts Clustering Coefficient')
-    axs[1].set_xlabel('Clustering Coefficient')
-    axs[1].set_ylabel('Frequency')
+    # Node colors: first 5 nodes red, rest blue
+    node_colors = ['red' if i < 5 else 'blue' for i in G.nodes()]
 
+    # Edge colors based on weight
+    edges = G.edges(data=True)
+    weights = [G[u][v]['weight'] for u, v in G.edges()]
+    
+    # Normalize edge weights for colormap
+    norm = mcolors.Normalize(vmin=min(weights), vmax=max(weights))
+    cmap = cm.coolwarm
+    edge_colors = [cmap(norm(weight)) for weight in weights]
+
+    # Draw nodes
+    nx.draw_networkx_nodes(G, pos, node_color=node_colors, node_size=700, ax=ax)
+    
+    # Draw edges
+    nx.draw_networkx_edges(G, pos, edge_color=edge_colors, width=2, ax=ax)
+
+    # Draw labels
+    nx.draw_networkx_labels(G, pos, labels=labels, font_color='white', font_size=12)
+
+    # Colorbar for edges
+    sm = plt.cm.ScalarMappable(cmap=cmap, norm=norm)
+    sm.set_array([])  # Dummy empty array for the colorbar
+    cbar = plt.colorbar(sm, ax=ax, orientation='vertical', shrink=0.8)
+    cbar.set_label('Correlation Coeff.', fontsize=12)
+    cbar.ax.tick_params(labelsize=10)
+
+    if title:
+        plt.title(title)
     plt.tight_layout()
     plt.show()
 
-def plot_shortest_path_length(G_reference, G_signal):
-    fig, axs = plt.subplots(1, 2, figsize=(12, 6))
-
-    path_length_reference = dict(nx.shortest_path_length(G_reference))
-    path_length_reference = [length for lengths in path_length_reference.values() for length in lengths.values()]
-    axs[0].hist(path_length_reference, bins=10, color='b', alpha=0.7)
-    axs[0].set_title('Reference Counts Shortest Path Length')
-    axs[0].set_xlabel('Path Length')
-    axs[0].set_ylabel('Frequency')
-
-    path_length_signal = dict(nx.shortest_path_length(G_signal))
-    path_length_signal = [length for lengths in path_length_signal.values() for length in lengths.values()]
-    axs[1].hist(path_length_signal, bins=10, color='r', alpha=0.7)
-    axs[1].set_title('Signal Counts Shortest Path Length')
-    axs[1].set_xlabel('Path Length')
-    axs[1].set_ylabel('Frequency')
-
-    plt.tight_layout()
-    plt.show()
-
-
-def plot_community_detection(G_reference, G_signal):
-    fig, axs = plt.subplots(1, 2, figsize=(12, 6))
-
-    communities_reference = greedy_modularity_communities(G_reference)
-    community_map_reference = {}
-    for i, community in enumerate(communities_reference):
-        for node in community:
-            community_map_reference[node] = i
-    colors_reference = [community_map_reference[node] for node in G_reference]
-    pos_reference = nx.spring_layout(G_reference)
-    nx.draw(G_reference, pos_reference, node_color=colors_reference, with_labels=True, node_size=500, cmap=plt.cm.rainbow, ax=axs[0])
-    axs[0].set_title('Reference Counts Community Detection')
-
-    communities_signal = greedy_modularity_communities(G_signal)
-    community_map_signal = {}
-    for i, community in enumerate(communities_signal):
-        for node in community:
-            community_map_signal[node] = i
-    colors_signal = [community_map_signal[node] for node in G_signal]
-    pos_signal = nx.spring_layout(G_signal)
-    nx.draw(G_signal, pos_signal, node_color=colors_signal, with_labels=True, node_size=500, cmap=plt.cm.rainbow, ax=axs[1])
-    axs[1].set_title('Signal Counts Community Detection')
-
-    plt.tight_layout()
-    plt.show()
 
 # Centrality Measures
 def plot_centrality_measures(G_reference, G_signal):

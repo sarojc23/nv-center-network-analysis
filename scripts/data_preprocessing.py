@@ -11,7 +11,7 @@ def load_data(file_path):
     
     return data
 
-def preprocess_counts_data(data):
+def preprocess_data(data):
     counts_data = data['counts']
     counts_array = np.array(counts_data)
     return counts_array
@@ -30,6 +30,6 @@ if __name__ == "__main__":
     output_dir = os.path.join('data', 'processed')
     
     data = load_data(input_path)
-    counts_array = preprocess_counts_data(data)
+    counts_array = preprocess_data(data)
     output_path = save_processed_data(counts_array, output_dir)
     print(f"Processed data saved to: {output_path}")
