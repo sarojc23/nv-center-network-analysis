@@ -5,26 +5,26 @@ The project directory structure provides an organized way to manage and store yo
 
 ## Project Structure
 
-```plaintext
-nv-center-network-analysis/
-├── data/
-│   ├── raw/
-│   ├── processed/
-├── notebooks/
-│   ├── data_analysis.ipynb
-│   ├── network_analysis.ipynb
-├── scripts/
-│   ├── data_preprocessing.py
-│   ├── network_analysis.py
-├── src/
-│   ├── utils.py
-│   ├── visualization.py
-├── README.md
-├── requirements.txt
-├── .gitignore
-```plaintext
+```bash
+    nv-center-network-analysis/
+    ├── data/
+    │   ├── raw/
+    │   ├── processed/
+    ├── notebooks/
+    │   ├── data_analysis.ipynb
+    │   ├── network_analysis.ipynb
+    ├── scripts/
+    │   ├── data_preprocessing.py
+    │   ├── network_analysis.py
+    ├── src/
+    │   ├── utils.py
+    │   ├── visualization.py
+    ├── README.md
+    ├── requirements.txt
+    ├── .gitignore
+```
 
-Explanation of Each Directory and File
+## Explanation of Each Directory and File
 data/: This directory contains subdirectories for raw and processed data files.
 
 raw/: Store raw data files here.
@@ -47,8 +47,9 @@ requirements.txt: Text file listing the project's dependencies that can be insta
 
 .gitignore: Text file specifying files and directories to be ignored by git, such as temporary files, data files, and compiled code.
 
-How to Use the Directory Structure
-Setting Up the Project:
+## How to Use the Directory Structure
+
+**Setting Up the Project:**
 
 Navigate to your project directory: cd nv-center-network-analysis
 Create the directories and files as shown in the structure above.
@@ -60,42 +61,41 @@ Using the Scripts and Notebooks:
 data_preprocessing.py: Run this script to load, clean, and preprocess your raw data.
 network_analysis.py: Run this script to perform network analysis on the processed data.
 data_analysis.ipynb and network_analysis.ipynb: Use these notebooks for interactive analysis and visualization.
-Installing Dependencies:
 
-Install the required Python packages using the requirements.txt file:
-bash
-Copy code
-pip install -r requirements.txt
+**Installing Dependencies:**
+
+Install the required Python packages using the ```requirements.txt``` file:
+
+```bash
+    pip install -r requirements.txt
+```
 Version Control with Git:
+```bash
+    git init #Initialize a git repository if you haven't already: 
+    git add . #Add files to the staging area:
+    git commit -m "Initial commit with project structure and sample code" #Commit the changes 
+    git push -u origin main #Push the changes to your GitHub repository:
+```
 
-Initialize a git repository if you haven't already: git init
-Add files to the staging area: git add .
-Commit the changes: git commit -m "Initial commit with project structure and sample code"
-Push the changes to your GitHub repository:
-bash
-Copy code
-git remote add origin https://github.com/your-username/nv-center-network-analysis.git
-git push -u origin main
-Recap of PowerShell Commands
 Here are the commands to create directories and files using PowerShell, assuming you are in the root directory of your project:
+```bash
+    # Create directories
+    mkdir data
+    mkdir data\raw
+    mkdir data\processed
+    mkdir notebooks
+    mkdir scripts
+    mkdir src
 
-powershell
+    # Create empty files
+    New-Item -Path . -Name "requirements.txt" -ItemType "file"
+    New-Item -Path . -Name ".gitignore" -ItemType "file"
+    New-Item -Path .\scripts\ -Name "data_preprocessing.py" -ItemType "file"
+    New-Item -Path .\scripts\ -Name "network_analysis.py" -ItemType "file"
+    New-Item -Path .\src\ -Name "utils.py" -ItemType "file"
+    New-Item -Path .\src\ -Name "visualization.py" -ItemType "file"
+    New-Item -Path .\notebooks\ -Name "data_analysis.ipynb" -ItemType "file"
+    New-Item -Path .\notebooks\ -Name "network_analysis.ipynb" -ItemType "file"
+```
 
-# Create directories
-mkdir data
-mkdir data\raw
-mkdir data\processed
-mkdir notebooks
-mkdir scripts
-mkdir src
-
-# Create empty files
-New-Item -Path . -Name "requirements.txt" -ItemType "file"
-New-Item -Path . -Name ".gitignore" -ItemType "file"
-New-Item -Path .\scripts\ -Name "data_preprocessing.py" -ItemType "file"
-New-Item -Path .\scripts\ -Name "network_analysis.py" -ItemType "file"
-New-Item -Path .\src\ -Name "utils.py" -ItemType "file"
-New-Item -Path .\src\ -Name "visualization.py" -ItemType "file"
-New-Item -Path .\notebooks\ -Name "data_analysis.ipynb" -ItemType "file"
-New-Item -Path .\notebooks\ -Name "network_analysis.ipynb" -ItemType "file"
 By following these instructions, you will have a well-organized project structure that will help in managing your code, data, and analysis tasks efficiently.
