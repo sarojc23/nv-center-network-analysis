@@ -25,42 +25,40 @@ The project directory structure provides an organized way to manage and store yo
 ```
 
 ## Explanation of Each Directory and File
-data/: This directory contains subdirectories for raw and processed data files.
+```data/```: This directory contains subdirectories for raw and processed data files.
+```raw/```: Store raw data files here.
+```processed/```: Store processed data files here after cleaning and preprocessing.
 
-raw/: Store raw data files here.
-processed/: Store processed data files here after cleaning and preprocessing.
-notebooks/: This directory contains Jupyter notebooks for exploratory data analysis and network analysis.
+```notebooks/```: This directory contains Jupyter notebooks for exploratory data analysis and network analysis.
+```data_analysis.ipynb```: Jupyter notebook for initial data exploration and analysis.
+```network_analysis.ipynb```: Jupyter notebook for analyzing network structures of NV centers.
+```scripts/```: This directory contains standalone Python scripts for data preprocessing and network analysis.
+```data_preprocessing.py```: Script to load, clean, and preprocess raw data.
+```network_analysis.py```: Script to perform network analysis on the processed data.
+```src/```: This directory contains reusable Python modules for utility functions and visualization.
+```utils.py```: Module containing utility functions such as computing correlations and building networks.
+```visualization.py```: Module containing functions for visualizing the network structures.
+```README.md```: Markdown file providing an overview of the project, setup instructions, and usage examples.
 
-data_analysis.ipynb: Jupyter notebook for initial data exploration and analysis.
-network_analysis.ipynb: Jupyter notebook for analyzing network structures of NV centers.
-scripts/: This directory contains standalone Python scripts for data preprocessing and network analysis.
+```requirements.txt```: Text file listing the project's dependencies that can be installed via pip.
 
-data_preprocessing.py: Script to load, clean, and preprocess raw data.
-network_analysis.py: Script to perform network analysis on the processed data.
-src/: This directory contains reusable Python modules for utility functions and visualization.
-
-utils.py: Module containing utility functions such as computing correlations and building networks.
-visualization.py: Module containing functions for visualizing the network structures.
-README.md: Markdown file providing an overview of the project, setup instructions, and usage examples.
-
-requirements.txt: Text file listing the project's dependencies that can be installed via pip.
-
-.gitignore: Text file specifying files and directories to be ignored by git, such as temporary files, data files, and compiled code.
+```.gitignore```: Text file specifying files and directories to be ignored by git, such as temporary files, data files, and compiled code.
 
 ## How to Use the Directory Structure
 
 **Setting Up the Project:**
 
-Navigate to your project directory: cd nv-center-network-analysis
+***Nevigate to your project directory:*** 
+```cd nv-center-network-analysis```
 Create the directories and files as shown in the structure above.
-Adding Content to Files:
 
+***Adding Content to Files:***
 Open the files in a text editor or IDE and add the code provided in the previous instructions.
 Using the Scripts and Notebooks:
 
-data_preprocessing.py: Run this script to load, clean, and preprocess your raw data.
-network_analysis.py: Run this script to perform network analysis on the processed data.
-data_analysis.ipynb and network_analysis.ipynb: Use these notebooks for interactive analysis and visualization.
+```data_preprocessing.py```: Run this script to load, clean, and preprocess your raw data.
+```network_analysis.py```: Run this script to perform network analysis on the processed data.
+```data_analysis.ipynb``` and ```network_analysis.ipynb```: Use these notebooks for interactive analysis and visualization.
 
 **Installing Dependencies:**
 
